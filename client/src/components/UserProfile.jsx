@@ -40,7 +40,7 @@ export default function UserProfile() {
         } catch (error) {
             console.error('Error fetching profile:', error);
             setLoading(false);
-            
+
             if (error.response && error.response.status === 401) {
                 navigate('/login');
             }
@@ -50,7 +50,7 @@ export default function UserProfile() {
     const handleLogout = async () => {
         try {
             await axios.get('/auth/logout');
-            window.location.href = '/'; 
+            navigate('/login');
         } catch (error) {
             console.error('Logout failed:', error);
         }

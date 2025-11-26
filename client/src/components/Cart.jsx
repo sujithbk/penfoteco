@@ -3,20 +3,19 @@ import {
     Box,
     Container,
     Typography,
-    Grid,
-    Paper,
     Button,
     IconButton,
-    Divider,
-    Select,
-    MenuItem,
-    FormControl,
+    Card,
+    CardContent,
     CircularProgress,
     AppBar,
     Toolbar
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 
@@ -42,6 +41,7 @@ export default function Cart() {
     };
 
     const updateQty = async (productId, qty) => {
+        if (qty < 1) return;
         try {
             const { data } = await axios.put('/api/cart/update', { productId, qty });
             setCart(data);
@@ -68,7 +68,6 @@ export default function Cart() {
 
     const handleCheckout = async () => {
         try {
-            
             const orderData = {
                 products: cart.items.map(item => ({
                     productId: item.product._id,
@@ -88,14 +87,13 @@ export default function Cart() {
             navigate('/order-confirmation');
         } catch (error) {
             console.error('Error placing order:', error);
-            alert('Failed to place order');
         }
     };
 
     if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress /></Box>;
 
     return (
-        <Box sx={{ bgcolor: '#eaeded', minHeight: '100vh', pb: 4 }}>
+        <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh', pb: 4 }}>
             {/* Header */}
             <AppBar position="sticky" sx={{ bgcolor: '#131921' }}>
                 <Toolbar>
@@ -109,105 +107,152 @@ export default function Cart() {
             </AppBar>
 
             <Container maxWidth="xl" sx={{ mt: 4 }}>
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' }, gap: 3 }}>
                     {/* Cart Items */}
-                    <Grid item xs={12} md={9}>
-                        <Paper sx={{ p: 3 }}>
-                            <Typography variant="h4" sx={{ mb: 2, fontWeight: 400 }}>
-                                Shopping Cart
-                            </Typography>
-                            <Typography variant="body2" sx={{ textAlign: 'right', color: '#565959', mb: 1 }}>
-                                Price
-                            </Typography>
-                            <Divider />
+                    <Box>
+                        <Typography variant="h5" sx={{ mb: 3, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <ShoppingCartIcon /> Shopping Cart
+                        </Typography>
 
-                            {cart?.items?.length === 0 ? (
-                                <Box sx={{ py: 4, textAlign: 'center' }}>
-                                    <Typography variant="h6">Your Amazon Cart is empty.</Typography>
-                                    <Button onClick={() => navigate('/')} sx={{ mt: 2 }}>
+                        {cart?.items?.length === 0 ? (
+                            <Card sx={{ borderRadius: 4, boxShadow: 2 }}>
+                                <CardContent sx={{ py: 8, textAlign: 'center' }}>
+                                    <Typography variant="h6" sx={{ mb: 2 }}>Your Amazon Cart is empty.</Typography>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => navigate('/')}
+                                        sx={{
+                                            bgcolor: '#f0c14b',
+                                            color: '#111',
+                                            '&:hover': { bgcolor: '#ddb347' },
+                                            textTransform: 'none',
+                                            borderRadius: 3,
+                                            px: 4
+                                        }}
+                                    >
                                         Shop today's deals
                                     </Button>
-                                </Box>
-                            ) : (
-                                cart?.items?.map((item) => (
-                                    <Box key={item._id}>
-                                        <Grid container spacing={2} sx={{ py: 3 }}>
-                                            <Grid item xs={12} sm={3} md={2}>
+                                </CardContent>
+                            </Card>
+                        ) : (
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                {cart?.items?.map((item) => (
+                                    <Card key={item._id} sx={{ borderRadius: 4, boxShadow: 2, bgcolor: '#fff' }}>
+                                        <CardContent sx={{ p: 3 }}>
+                                            <Box sx={{ display: 'flex', gap: 3 }}>
                                                 <img
                                                     src={item.product.image}
                                                     alt={item.product.name}
-                                                    style={{ maxWidth: '100%', maxHeight: '150px', objectFit: 'contain' }}
+                                                    style={{
+                                                        width: '128px',
+                                                        height: '128px',
+                                                        objectFit: 'cover',
+                                                        borderRadius: '12px'
+                                                    }}
                                                 />
-                                            </Grid>
-                                            <Grid item xs={12} sm={9} md={10}>
-                                                <Grid container>
-                                                    <Grid item xs={10}>
-                                                        <Typography variant="h6" sx={{ fontWeight: 500, fontSize: '1.2rem' }}>
+                                                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                                    <Box>
+                                                        <Typography variant="h6" sx={{ fontWeight: 500, fontSize: '1.1rem', mb: 1 }}>
                                                             {item.product.name}
                                                         </Typography>
-                                                        <Typography variant="body2" color="success.main" sx={{ my: 1 }}>
-                                                            In Stock
+                                                        <Typography variant="body1" sx={{ color: '#007600', fontWeight: 600 }}>
+                                                            ₹{item.product.price.toLocaleString()}
                                                         </Typography>
-                                                        <Typography variant="caption" display="block" sx={{ mb: 1 }}>
-                                                            Eligible for FREE Shipping
-                                                        </Typography>
+                                                    </Box>
 
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                                                            <FormControl size="small" sx={{ mr: 2, minWidth: 80 }}>
-                                                                <Select
-                                                                    value={item.qty}
-                                                                    onChange={(e) => updateQty(item.product._id, e.target.value)}
-                                                                    sx={{ height: 30, fontSize: '0.9rem' }}
-                                                                >
-                                                                    {[...Array(10).keys()].map((x) => (
-                                                                        <MenuItem key={x + 1} value={x + 1}>
-                                                                            Qty: {x + 1}
-                                                                        </MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            </FormControl>
-
-                                                            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: 20, alignSelf: 'center' }} />
-
-                                                            <Button
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
+                                                        <Box sx={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            bgcolor: '#e0e0e0',
+                                                            borderRadius: 3,
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            gap: 2
+                                                        }}>
+                                                            <IconButton
                                                                 size="small"
-                                                                onClick={() => removeFromCart(item.product._id)}
-                                                                sx={{ textTransform: 'none', color: '#007185' }}
+                                                                onClick={() => updateQty(item.product._id, item.qty - 1)}
+                                                                sx={{ p: 0.5 }}
                                                             >
-                                                                Delete
-                                                            </Button>
+                                                                <RemoveIcon fontSize="small" />
+                                                            </IconButton>
+                                                            <Typography sx={{ fontWeight: 500, minWidth: '20px', textAlign: 'center' }}>
+                                                                {item.qty}
+                                                            </Typography>
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => updateQty(item.product._id, item.qty + 1)}
+                                                                sx={{ p: 0.5 }}
+                                                            >
+                                                                <AddIcon fontSize="small" />
+                                                            </IconButton>
                                                         </Box>
-                                                    </Grid>
-                                                    <Grid item xs={2} sx={{ textAlign: 'right' }}>
-                                                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                                                            ₹{item.product.price.toFixed(2)}
-                                                        </Typography>
-                                                    </Grid>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                        <Divider />
-                                    </Box>
-                                ))
-                            )}
 
-                            {cart?.items?.length > 0 && (
-                                <Box sx={{ textAlign: 'right', mt: 2 }}>
-                                    <Typography variant="h6">
-                                        Subtotal ({totalItems} items): <b>₹{calculateTotal().toFixed(2)}</b>
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() => removeFromCart(item.product._id)}
+                                                            startIcon={<DeleteIcon />}
+                                                            sx={{
+                                                                color: '#d32f2f',
+                                                                textTransform: 'none',
+                                                                '&:hover': { bgcolor: '#ffebee' }
+                                                            }}
+                                                        >
+                                                            Remove
+                                                        </Button>
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </Box>
+                        )}
+                    </Box>
+
+                    {/* Order Summary */}
+                    {cart?.items?.length > 0 && (
+                        <Card sx={{
+                            borderRadius: 4,
+                            boxShadow: 3,
+                            bgcolor: '#fff',
+                            height: 'fit-content',
+                            position: 'sticky',
+                            top: 80
+                        }}>
+                            <CardContent sx={{ p: 3 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                                    Order Summary
+                                </Typography>
+
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                                    <Typography variant="body2">
+                                        Subtotal ({totalItems} items)
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                        ₹{calculateTotal().toLocaleString()}
                                     </Typography>
                                 </Box>
-                            )}
-                        </Paper>
-                    </Grid>
 
-                    {/* Subtotal Sidebar */}
-                    {cart?.items?.length > 0 && (
-                        <Grid item xs={12} md={3}>
-                            <Paper sx={{ p: 3 }}>
-                                <Typography variant="h6" sx={{ mb: 2 }}>
-                                    Subtotal ({totalItems} items): <b>₹{calculateTotal().toFixed(2)}</b>
-                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                                    <Typography variant="body2">Delivery</Typography>
+                                    <Typography variant="body2" sx={{ color: '#007600', fontWeight: 500 }}>
+                                        FREE
+                                    </Typography>
+                                </Box>
+
+                                <Box sx={{ borderTop: '1px solid #e0e0e0', my: 2 }} />
+
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                        Total
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                        ₹{calculateTotal().toLocaleString()}
+                                    </Typography>
+                                </Box>
+
                                 <Button
                                     fullWidth
                                     variant="contained"
@@ -217,15 +262,18 @@ export default function Cart() {
                                         color: '#111',
                                         '&:hover': { bgcolor: '#ddb347' },
                                         textTransform: 'none',
-                                        borderRadius: 2
+                                        borderRadius: 3,
+                                        py: 1.5,
+                                        fontSize: '1rem',
+                                        fontWeight: 500
                                     }}
                                 >
                                     Proceed to Buy
                                 </Button>
-                            </Paper>
-                        </Grid>
+                            </CardContent>
+                        </Card>
                     )}
-                </Grid>
+                </Box>
             </Container>
         </Box>
     );

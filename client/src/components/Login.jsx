@@ -29,11 +29,9 @@ export default function Login() {
 
         try {
             const response = await axios.post('/auth/login', formData);
-            alert('Login successful!');
-            navigate('/'); 
+            navigate('/');
         } catch (err) {
             console.error(err);
-            alert(err.response?.data?.message || 'Login failed');
         }
     };
 

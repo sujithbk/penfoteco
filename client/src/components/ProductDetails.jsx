@@ -43,7 +43,6 @@ export default function ProductDetails() {
             const { data } = await axios.get(`/api/products/${id}`);
             setProduct(data);
 
-            
             const allProductsRes = await axios.get('/api/products');
             const similar = allProductsRes.data
                 .filter(p => p.category === data.category && p._id !== data._id)
@@ -71,14 +70,12 @@ export default function ProductDetails() {
         try {
             await axios.post('/api/cart/add', { productId: product._id, qty });
             fetchCartCount();
-            alert('Added to cart!');
+            navigate('/cart');
         } catch (error) {
             if (error.response && error.response.status === 401) {
-                alert('Please login to add items to cart');
                 navigate('/login');
             } else {
                 console.error('Error adding to cart:', error);
-                alert('Failed to add to cart');
             }
         }
     };

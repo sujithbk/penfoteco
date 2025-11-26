@@ -29,23 +29,11 @@ export default function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (formData.password.length < 6) {
-            alert("Password must be at least 6 characters");
-            return;
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
-
         try {
-            await axios.post('/auth/signup', formData);
-            alert("Account created successfully!");
+            const response = await axios.post('/auth/signup', formData);
             navigate('/login');
         } catch (err) {
             console.error(err);
-            alert(err.response?.data?.message || 'Signup failed');
         }
     };
 
@@ -85,7 +73,6 @@ export default function Signup() {
                 </Typography>
 
                 <Box component="form" onSubmit={handleSubmit}>
-                    {/* Form Fields */}
                     <Typography fontSize={14} sx={{ mb: 0.5 }}>
                         Your name
                     </Typography>
@@ -145,7 +132,6 @@ export default function Signup() {
                         sx={{ mb: 3 }}
                     />
 
-                    {/* Submit Button */}
                     <Button
                         type="submit"
                         fullWidth
@@ -164,7 +150,6 @@ export default function Signup() {
                     </Button>
                 </Box>
 
-                {/* Terms Text */}
                 <Typography fontSize={13} color="text.secondary" sx={{ mb: 2 }}>
                     By creating an account, you agree to our{" "}
                     <Link href="#" underline="hover">Conditions of Use</Link>,{" "}

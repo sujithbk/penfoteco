@@ -18,6 +18,7 @@ import axios from '../api/axios';
 import HomeCarousel from './Carousel/HomeCarousel';
 import CategoryGrid from './CategoryGrid/CategoryGrid';
 import ProductSection from './ProductSection/ProductSection';
+import Footer from './Footer/Footer';
 
 export default function Homepage() {
     const [products, setProducts] = useState([]);
@@ -42,6 +43,16 @@ export default function Homepage() {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await axios.get('/auth/logout');
+            setUser(null);
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     const fetchProducts = async () => {
         try {
             const response = await axios.get('/api/products');
@@ -57,7 +68,7 @@ export default function Homepage() {
 
     const handleSearch = () => {
         if (searchTerm.trim()) {
-            setSelectedCategory(''); 
+            setSelectedCategory('');
             const element = document.getElementById('products-section');
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
@@ -67,7 +78,7 @@ export default function Homepage() {
 
     const handleCategorySelect = (category) => {
         setSelectedCategory(category);
-        setSearchTerm(''); 
+        setSearchTerm('');
         const element = document.getElementById('products-section');
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
@@ -207,8 +218,18 @@ export default function Homepage() {
                         </Typography>
                     </Box>
 
+                    {/* Logout (only show if logged in) */}
+                    {user && (
+                        <Box sx={{ color: "#fff", cursor: "pointer" }} onClick={handleLogout}>
+                            <Typography variant="caption">Sign Out</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                                Logout
+                            </Typography>
+                        </Box>
+                    )}
+
                     {/* Cart */}
-                    <IconButton sx={{ color: "#fff" }}>
+                    <IconButton sx={{ color: "#fff" }} onClick={() => navigate('/cart')}>
                         <Badge badgeContent={0} color="error">
                             <ShoppingCartIcon sx={{ fontSize: 30 }} />
                         </Badge>
@@ -258,6 +279,9 @@ export default function Homepage() {
                     </>
                 )}
             </Box>
+
+            {/* Footer */}
+            <Footer />
         </Box>
     );
 }
