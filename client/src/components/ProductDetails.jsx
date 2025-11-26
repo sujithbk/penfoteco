@@ -43,7 +43,7 @@ export default function ProductDetails() {
             const { data } = await axios.get(`/api/products/${id}`);
             setProduct(data);
 
-            // Fetch similar products (same category)
+            
             const allProductsRes = await axios.get('/api/products');
             const similar = allProductsRes.data
                 .filter(p => p.category === data.category && p._id !== data._id)

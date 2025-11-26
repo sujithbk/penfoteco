@@ -57,7 +57,7 @@ export default function Homepage() {
 
     const handleSearch = () => {
         if (searchTerm.trim()) {
-            setSelectedCategory(''); // Clear category when searching
+            setSelectedCategory(''); 
             const element = document.getElementById('products-section');
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
@@ -67,7 +67,7 @@ export default function Homepage() {
 
     const handleCategorySelect = (category) => {
         setSelectedCategory(category);
-        setSearchTerm(''); // Clear search when selecting category
+        setSearchTerm(''); 
         const element = document.getElementById('products-section');
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });

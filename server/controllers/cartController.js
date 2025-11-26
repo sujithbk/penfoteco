@@ -1,7 +1,7 @@
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
-// Get user's cart
+
 exports.getCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
@@ -15,7 +15,7 @@ exports.getCart = async (req, res) => {
     }
 };
 
-// Add item to cart
+
 exports.addToCart = async (req, res) => {
     const { productId, qty } = req.body;
 
@@ -29,10 +29,10 @@ exports.addToCart = async (req, res) => {
         const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
 
         if (itemIndex > -1) {
-            // Product exists in cart, update quantity
+          
             cart.items[itemIndex].qty += qty;
         } else {
-            // Product does not exist in cart, add new item
+           
             cart.items.push({ product: productId, qty });
         }
 
@@ -45,7 +45,7 @@ exports.addToCart = async (req, res) => {
     }
 };
 
-// Update item quantity
+
 exports.updateCartItem = async (req, res) => {
     const { productId, qty } = req.body;
 
@@ -72,7 +72,7 @@ exports.updateCartItem = async (req, res) => {
     }
 };
 
-// Remove item from cart
+
 exports.removeFromCart = async (req, res) => {
     const { productId } = req.params;
 

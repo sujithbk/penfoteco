@@ -1,7 +1,7 @@
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 
-// Create new order
+
 exports.createOrder = async (req, res) => {
     try {
         const { products, amount, address } = req.body;
@@ -15,7 +15,7 @@ exports.createOrder = async (req, res) => {
 
         const savedOrder = await newOrder.save();
 
-        // Clear user's cart after successful order
+      
         await Cart.findOneAndDelete({ user: req.user._id });
 
         res.status(201).json(savedOrder);
@@ -25,7 +25,7 @@ exports.createOrder = async (req, res) => {
     }
 };
 
-// Get user orders
+
 exports.getUserOrders = async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id })

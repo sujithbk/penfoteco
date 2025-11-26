@@ -8,14 +8,13 @@ router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 router.get('/current_user', authController.currentUser);
 
-// Google Auth Routes
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
-        // Successful authentication, redirect home.
+        
         res.redirect(process.env.CLIENT_URL);
     }
 );

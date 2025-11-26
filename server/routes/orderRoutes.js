@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
 
-// Middleware to ensure user is authenticated
+
 const ensureAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();

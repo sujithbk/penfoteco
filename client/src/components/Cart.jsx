@@ -68,7 +68,7 @@ export default function Cart() {
 
     const handleCheckout = async () => {
         try {
-            // Create order payload (simplified address for now)
+            
             const orderData = {
                 products: cart.items.map(item => ({
                     productId: item.product._id,
@@ -76,7 +76,7 @@ export default function Cart() {
                 })),
                 amount: calculateTotal(),
                 address: {
-                    fullName: "User Name", // You might want to fetch this from user profile or add a checkout form
+                    fullName: "User Name",
                     street: "123 Main St",
                     city: "City",
                     postalCode: "12345",

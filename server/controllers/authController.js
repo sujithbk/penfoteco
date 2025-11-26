@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        // If user signed up with Google, they might not have a password
+      
         if (!user.password) {
             return res.status(400).json({ message: "Please login with Google" });
         }
@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        // Log user in via session
+        
         req.login(user, (err) => {
             if (err) {
                 return res.status(500).json({ message: "Login failed" });
