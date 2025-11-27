@@ -36,7 +36,7 @@ export default function Login() {
     };
 
     const googleAuth = () => {
-        window.location.href = 'http://localhost:8080/auth/google';
+        window.location.href = 'https://penfoteco-backend.onrender.com';
     };
 
     return (
