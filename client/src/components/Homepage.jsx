@@ -18,7 +18,7 @@ import axios from '../api/axios';
 import HomeCarousel from './Carousel/HomeCarousel';
 import CategoryGrid from './CategoryGrid/CategoryGrid';
 import ProductSection from './ProductSection/ProductSection';
-import Footer from './Footer/Footer';
+import Footer from './footer/Footer';
 
 export default function Homepage() {
     const [products, setProducts] = useState([]);
